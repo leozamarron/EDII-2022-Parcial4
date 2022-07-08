@@ -380,3 +380,24 @@ float arbolAr(ABOA a)
     }
     return op;
 }
+
+int complementoArb(AB a, AB b)
+{
+    int res;
+
+    if(!a && !b)
+    {
+        res = 1;
+        res = complementoArb(a->izq, b->izq);
+        res = complementoArb(a->der, b->der);
+    }
+    else if(a && b && (a->info && !b->info) || (!a->info && b->info))
+    {
+        res = complementoArb(a->izq, b->izq);
+        res = complementoArb(a->der, b->der);
+    }
+    else
+        res = 0;
+
+    return res;
+}
