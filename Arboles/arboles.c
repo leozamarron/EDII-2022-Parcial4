@@ -315,12 +315,12 @@ int calculaNivel(ABO a, int valor)
         cont = 1;
     else if(valor < a->info)
     {
-        cont = buscaOrd(a->der, valor);
+        cont = calculaNivel(a->der, valor);
         if(cont)
             cont++;
     }
     else
-        cont = buscaOrd(a->info, valor);
+        cont = calculaNivel(a->info, valor);
         if(cont)
             cont++;
     return cont;
@@ -336,7 +336,7 @@ int datoRep(AB a, int buscado)
     else if(buscado == a->info)
         res = 1;
     else
-        res = buscaAB(a->izq, buscado) + buscaAB(a->der, buscado);
+        res = datoRep(a->izq, buscado) + datoRep(a->der, buscado);
     return res;
 }
 
