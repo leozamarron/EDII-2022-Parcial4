@@ -9,6 +9,13 @@ typedef struct nodoAB
     struct nodoAB *der;
 }*AB;
 
+typedef struct nodoABO
+{
+    struct nodoABO *izq;
+    int info;   //<tipo> info;
+    struct nodoABO *der;
+}*ABO;
+
 /*
 Operaciones básicas
 	- Inicialización 
@@ -120,7 +127,6 @@ void enOrden(AB a)
         enOrden(a->izq);
         printf("%d\t", a->info);
         enOrden(a->der);
-
     }
 }
 
@@ -221,10 +227,156 @@ int buscaAB(AB a,  int buscado)
         res = 0;
     else if(buscado == a->info)
         res = 1;
-    else{
-        res = buscaAB(a->izq, buscado);
-        if(!res)
-            res = buscaAB(a->der, buscado);
-    }
+    else
+        res = buscaAB(a->izq, buscado) || buscaAB(a->der, buscado);
+//    {
+//        res = buscaAB(a->izq, buscado);
+//        if(!res)
+//            res = buscaAB(a->der, buscado);
+//    }
     return res;
+}
+
+// Busqueda ordenada
+int buscaOrd(ABO a, int buscado)
+{
+    int res;
+
+    if(!a)
+        res = 0;
+    else if(buscado == a->info)
+        res = 1;
+    else if(buscado < a->info)
+        res = buscaOrd(a->der, buscado);
+    else
+        res = buscaOrd(a->info, buscado);
+    return res;
+}
+
+// Elimina arbol binario ordenado
+int eliminaABO(ABO *a, int ref)
+{
+    int res;
+    ABO aux;
+
+    if(!*a)
+        res = 0;
+    else if(ref == (*a)->info)
+    {
+        aux = *a;
+        if(!(*a)->der)
+            *a = (*a)->izq;
+        else if(!(*a)->izq)
+            *a = (*a)->der;
+        else{ //Tiene ambos sucesores
+            aux = aux->izq;
+            while (aux->der)
+                aux = aux->der;
+            (*a)->info = aux->info;
+            res = eliminaABO(&(*a)->izq, aux->info);
+            // aux = NULL;
+        }
+        //if(aux)
+        free(aux);
+        res = 1;
+    }
+    else if(ref < (*a)->info)
+        res = eliminaABO(&(*a)->izq, ref);
+    else
+        res = eliminaABO(&(*a)->der, ref);
+
+    return res;
+}
+
+
+// Funcion para saber si 2 arboles son iguales.
+int arbolesIguales(AB a, AB b)
+{
+    int res;
+
+    if(!a && !b)
+        res = 1;
+    else if(a && b && a->info == a->info)
+        res = arbolesIguales(a->izq, b->izq) && arbolesIguales(a->der, a->der);
+    else
+        res = 0;
+
+    return res;
+}
+
+// Función para calcular el nivel en que se encuentra un valor dado.
+int calculaNivel(ABO a, int valor)
+{
+    int cont;
+
+    if(!a)
+        cont = 0;
+    else if(valor == a->info)
+        cont = 1;
+    else if(valor < a->info)
+    {
+        cont = buscaOrd(a->der, valor);
+        if(cont)
+            cont++;
+    }
+    else
+        cont = buscaOrd(a->info, valor);
+        if(cont)
+            cont++;
+    return cont;
+}
+
+// Funcion para calcular el número de veces que se repite un dato en un arbol binario.
+int datoRep(AB a, int buscado)
+{
+    int res;
+
+    if(!a)
+        res = 0;
+    else if(buscado == a->info)
+        res = 1;
+    else
+        res = buscaAB(a->izq, buscado) + buscaAB(a->der, buscado);
+    return res;
+}
+
+// Funcion para mostrar todos los elementos femeninos que contiene un arbol de un tipo especifico
+void muestraFem(AB a)
+{
+    if(a)
+    {
+        muestraFem(a->izq);
+        printf("%s\n", a->info);
+        if(a->der)
+            muestraFem(a->der->izq);
+    }
+}
+
+typedef struct nodoABA
+{
+    struct nodoABOA *izq;
+    void *info;   //<tipo> info;
+    struct nodoABOA *der;
+}*ABOA;
+
+// Funcion aritmetica de un arbol en_orden
+float arbolAr(ABOA a)
+{
+    float n1, n2, op;
+    if(a)
+    {
+        n1 = arbolAr(a->izq);
+        n2 = arbolAr(a->der);
+        if(!a->der && !a->izq)
+            op = *(float*)a->info;
+        else
+            switch (*(char*)a->info)
+            {
+            case '+': op = n1 + n2; break;
+            case '-': op = n1 - n2; break;
+            case '*': op = n1 * n2; break;
+            case '/': op = n1 / n2; break;
+            }
+    }
+    return op;
 }
