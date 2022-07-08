@@ -296,8 +296,8 @@ int arbolesIguales(AB a, AB b)
 
     if(!a && !b)
         res = 1;
-    else if(a && b && a->info == a->info)
-        res = arbolesIguales(a->izq, b->izq) && arbolesIguales(a->der, a->der);
+    else if(a && b && a->info == b->info)
+        res = arbolesIguales(a->izq, b->izq) && arbolesIguales(a->der, b->der);
     else
         res = 0;
 
