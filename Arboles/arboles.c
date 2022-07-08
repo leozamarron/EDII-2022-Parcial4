@@ -334,7 +334,7 @@ int datoRep(AB a, int buscado)
     if(!a)
         res = 0;
     else if(buscado == a->info)
-        res = 1;
+        res = 1 + datoRep(a->izq, buscado) + datoRep(a->der, buscado);
     else
         res = datoRep(a->izq, buscado) + datoRep(a->der, buscado);
     return res;
